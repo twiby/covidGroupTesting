@@ -13,21 +13,9 @@ def infect(nTot, infectionRate):
 
 
 
-def main(args):
-	if args.nIndividuals:
-		nIndividuals = args.nIndividuals
-	else:
-		nIndividuals = 1000000
-	if args.infectionRate:
-		rateInfected = infectionRate
-	else:
-		rateInfected = 0.1
-	if args.poolSize:
-		poolSize = args.poolSize
-	else:
-		poolSize = 20
+def main(nIndividuals=1000000, infectionRate=0.1, poolSize=20):
 
-	infectedIndividuals = infect(nIndividuals, rateInfected)
+	infectedIndividuals = infect(nIndividuals, infectionRate)
 	print(np.sum(infectedIndividuals),"infected among ",nIndividuals," :",np.sum(infectedIndividuals)/nIndividuals,"%")
 	print()
 
@@ -38,8 +26,8 @@ def main(args):
 
 if __name__=="__main__":
 	parser = argparse.ArgumentParser(description="Computing different tactics of testing covid")
-	parser.add_argument('--nIndividuals', type=int, help="number of humans")
-	parser.add_argument('--infectionRate', action='store_true', help="rate of infection")
-	parser.add_argument('--poolSize', action='store_true', help="size of pools of human")
-	args = parser.parse_args()
-	main(args)
+	parser.add_argument('-n','--nIndividuals', type=int, help="number of humans")
+	parser.add_argument('-r','--infectionRate', type=float, help="rate of infection")
+	parser.add_argument('-p','--poolSize', type=int, help="size of pools of human")
+	args = {k:v for k,v in vars(parser.parse_args()).items() if v is not None}
+	main(**args)
