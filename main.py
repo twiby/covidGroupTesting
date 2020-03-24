@@ -1,6 +1,5 @@
 import argparse
 import numpy as np
-import testingStrategies as ts
 
 def infect(nTot, infectionRate):
 	from random import shuffle, random
@@ -14,14 +13,13 @@ def infect(nTot, infectionRate):
 
 
 def main(nIndividuals=1000000, infectionRate=0.1, poolSize=20):
+	import testingStrategies as ts
 
 	infectedIndividuals = infect(nIndividuals, infectionRate)
 	print(np.sum(infectedIndividuals),"infected among ",nIndividuals," :",np.sum(infectedIndividuals)/nIndividuals,"%")
 	print()
 
-	for strat in ts.getAllStrats():
-		ts.applyTestingStrategy(strat, infectedIndividuals, poolSize)
-
+	ts.applyAllStrategies(infectedIndividuals, poolSize)
 
 
 if __name__=="__main__":

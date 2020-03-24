@@ -21,19 +21,7 @@ class Tests(object):
 		else:
 			return pool
 
-
-def applyTestingStrategy(strat, infectedIndividuals, poolSize):
-	print("Applying", strat.__doc__,":")
-	testedPositive = []; testingMachine = Tests()
-	for p in pools(infectedIndividuals, poolSize):
-		testedPositive += strat(p, testingMachine)
-	assert(np.any([testedPositive[n]!=infectedIndividuals[n] for n in range(len(infectedIndividuals))])==False)
-	print("done in ", testingMachine.nTests, "tests (", testingMachine.nTests/len(infectedIndividuals)*100,"%)")
-	print()
-
-
 class testingStrategies:
-
 	def individualTesting(pool, testM):
 		'''individual testing'''
 		return [testM.test(i) for i in pool]
@@ -48,3 +36,17 @@ class testingStrategies:
 
 def getAllStrats():
 	return [getattr(testingStrategies,func) for func in dir(testingStrategies) if callable(getattr(testingStrategies, func)) and not func.startswith("__")]
+
+
+def applyTestingStrategy(strat, infectedIndividuals, poolSize):
+	print("Applying", strat.__doc__,":")
+	testedPositive = []; testingMachine = Tests()
+	for p in pools(infectedIndividuals, poolSize):
+		testedPositive += strat(p, testingMachine)
+	assert(np.any([testedPositive[n]!=infectedIndividuals[n] for n in range(len(infectedIndividuals))])==False)
+	print("done in ", testingMachine.nTests, "tests (", testingMachine.nTests/len(infectedIndividuals)*100,"%)")
+	print()
+
+def applyAllStrategies(infectedIndividuals, poolSize):
+	for strat in getAllStrats():
+		applyTestingStrategy(strat, infectedIndividuals, poolSize)
