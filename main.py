@@ -17,22 +17,23 @@ def infect(nTot, infectionRate):
 
 def main(nIndividuals=1000000, show=False):
 	import testingMachine as tm
+	from tqdm import tqdm
 
 
 	if not os.path.isfile("./results_all.npz"):
 		poolSizes = [2,3,4,5,6,7,8,9,10,12,14,17,20,25,30,40,50,60,70,80,90,100]
-		infectionRates = [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
+		infectionRates = list(np.array([i for i in range(1,30)] + [i for i in range(30,52,2)]) / 100)
 		results = []
-		for infectionRate in infectionRates:
+		for infectionRate in tqdm(infectionRates):
 			infectedIndividuals = infect(nIndividuals, infectionRate)
-			print(np.sum(infectedIndividuals),"infected among ",nIndividuals," :",np.sum(infectedIndividuals)/nIndividuals,"%")
-			print()
 
 			results.append(tm.applyAllStrategies(infectedIndividuals, poolSizes))
 			plt.savefig('./results_infected'+str(int(infectionRate*100))+'%.svg', format="svg")
 			plt.savefig('./results_infected'+str(int(infectionRate*100))+'%.png', format="png")
 			if show:
 				plt.show()
+			else:
+				plt.close()
 
 		results = np.array(results)
 		np.savez("./results_all", results=results, rates=infectionRates, pools=poolSizes)
@@ -42,7 +43,7 @@ def main(nIndividuals=1000000, show=False):
 		results = r["results"]
 		infectionRates = r["rates"]
 		poolSizes = r["pools"]
-	
+	print(results.shape)
 
 	stratNames = tm.getStratNames()
 

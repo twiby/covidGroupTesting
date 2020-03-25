@@ -29,7 +29,7 @@ class Tests(object):
 
 
 def applyTestingStrategy(strat, infectedIndividuals, poolSize):
-	print("Applying", strat.__doc__,"with pool ",poolSize)
+	# print("Applying", strat.__doc__,"with pool ",poolSize)
 	testingMachine = Tests()
 	testedPositive = strat(infectedIndividuals, poolSize, testingMachine)
 	assert(np.any([testedPositive[n]!=infectedIndividuals[n] for n in range(len(infectedIndividuals))])==False)
@@ -41,7 +41,7 @@ def applyAllStrategies(infectedIndividuals, poolSizes):
 	results = []
 	for strat in ts.getAllStrats():
 		res = []
-		nCoresAvailable = multiprocessing.cpu_count() -1 # We're mercifully leaving one cpu for other processes.
+		nCoresAvailable = multiprocessing.cpu_count()
 		groupedPoolSizes = [
 			[poolSizes[pool*nCoresAvailable + group ]
 			for group in range(min(nCoresAvailable, len(poolSizes)-pool*nCoresAvailable))]
@@ -54,7 +54,6 @@ def applyAllStrategies(infectedIndividuals, poolSizes):
 				res += p.starmap(applyTestingStrategy, ((strat, infectedIndividuals, poolSize) for poolSize in group))
 		results.append(res)
 		p = plt.plot(poolSizes, res, label=strat.__doc__+" (min: "+str(poolSizes[np.argmin(res)])+")")
-		# plt.axvline(poolSizes[np.argmin(res)], c=p[0].get_color(), lw=1, ls='--')
 	plt.xlabel("poolSize")
 	plt.ylabel("number of tests performed")
 	plt.title("different pooling strategies tried to reduce total number of tests (infection rate "+str(np.sum(infectedIndividuals)/len(infectedIndividuals)*100)+"%)")

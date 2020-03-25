@@ -2,6 +2,10 @@ import inspect
 import numpy as np
 import testingMachine as tm
 
+### infectedIndividuals is a list of booleans (True for infected, False for sain)
+### you MUST test with testM, as this will count the number of tests automatically
+### testM.test(arg) will return True if any among arg is infected, False otherwise
+### a pooling generator is available : tm.pools(individuals, poolSize)
 
 class testingStrategies:
 	def individualTesting(infectedIndividuals, poolSize, testM):
