@@ -1,7 +1,8 @@
 # covidGroupTesting
-group testing of covid-19 would maybe reduce the number of tests needed. To run these computations, if you have python and all required modules, you can use the command :
+group testing of covid-19 would maybe reduce the number of tests needed. To run these computations, if you have python, you can use these commands :
 ```
-python main.py
+pip install -r requirements.txt # optional, to install modules if needed
+python main.py # launches actual computation
 ```
 use the "-h" option to learn what other options you can add. The default computations are made on 1,000,000 individuals. Given an infection rate, people are infected according to a binomial law.
 If you run the script a second time, it won't recompute everything.

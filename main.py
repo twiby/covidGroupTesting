@@ -43,7 +43,6 @@ def main(nIndividuals=1000000, show=False):
 		results = r["results"]
 		infectionRates = r["rates"]
 		poolSizes = r["pools"]
-	print(results.shape)
 
 	stratNames = tm.getStratNames()
 
