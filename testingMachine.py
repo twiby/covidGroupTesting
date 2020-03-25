@@ -53,7 +53,7 @@ def applyAllStrategies(infectedIndividuals, poolSizes):
 				res += p.starmap(applyTestingStrategy, ((strat, infectedIndividuals, poolSize) for poolSize in group))
 
 		p = plt.plot(poolSizes, res, label=strat.__doc__+" (min: "+str(poolSizes[np.argmin(res)])+")")
-		plt.axvline(poolSizes[np.argmin(res)], c=p[0].get_color(), lw=1, ls='--')
+		# plt.axvline(poolSizes[np.argmin(res)], c=p[0].get_color(), lw=1, ls='--')
 	plt.xlabel("poolSize")
 	plt.ylabel("number of tests performed")
 	plt.title("different pooling strategies tried to reduce total number of tests (infection rate "+str(np.sum(infectedIndividuals)/len(infectedIndividuals)*100)+"%)")

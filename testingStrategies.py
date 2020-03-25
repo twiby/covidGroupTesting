@@ -32,10 +32,15 @@ class testingStrategies:
 			p = np.array(p).reshape([poolSize, poolSize])
 			xResults = [testM.test(p[x,:]) for x in range(poolSize)]
 			yResults = [testM.test(p[:,y]) for y in range(poolSize)]
-			for x in range(poolSize):
-				for y in range(poolSize):
-					if xResults[x] and yResults[y]:
-						temp[x,y] = testM.test(p[x,y])
+			if np.sum(xResults)==1 or np.sum(yResults)==1:
+				for x in range(poolSize):
+					for y in range(poolSize):
+						temp[x,y] = xResults[x] and yResults[y]
+			else:
+				for x in range(poolSize):
+					for y in range(poolSize):
+						if xResults[x] and yResults[y]:
+							temp[x,y] = testM.test(p[x,y])
 			res += list(temp.reshape([poolSize**2]))
 		return res
 
