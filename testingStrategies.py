@@ -1,56 +1,46 @@
 import inspect
 import numpy as np
+import testingMachine as tm
 
-def pools(data, poolSize):
-	if not isinstance(data, list):
-		return data
-	else:
-		for n in range(int(len(data)/poolSize)+1):
-			if data[n*poolSize:(n+1)*poolSize] == []:
-				continue
-			yield data[n*poolSize:(n+1)*poolSize]
-
-class Tests(object):
-	def __init__(self):
-		self.nTests = 0
-
-	def test(self, pool):
-		self.nTests += 1
-		if isinstance(pool, list):
-			return np.any(pool)
-		else:
-			return pool
 
 class testingStrategies:
 	def individualTesting(infectedIndividuals, poolSize, testM):
 		'''individual testing'''
 		res = []
-		for p in pools(infectedIndividuals, poolSize):
+		for p in tm.pools(infectedIndividuals, poolSize):
 			res += [testM.test(i) for i in p]
 		return res
 
 	def simplePoolTesting(infectedIndividuals, poolSize, testM):
 		'''simple pool testing'''
 		res = []
-		for p in pools(infectedIndividuals, poolSize):
+		for p in tm.pools(infectedIndividuals, poolSize):
 			if testM.test(p):
 				res += [testM.test(i) for i in p]
 			else:
 				res += [False for _ in p]
 		return res
 
+	def squarePoolTesting(infectedIndividuals, poolSize, testM):
+		'''2d pool testing'''
+		res = []
+		for p in tm.pools(infectedIndividuals, poolSize**2):
+			if len(p)!=poolSize**2:
+				res += testingStrategies.simplePoolTesting(p, poolSize, testM)
+				continue
+			temp = np.zeros([poolSize, poolSize])
+			p = np.array(p).reshape([poolSize, poolSize])
+			xResults = [testM.test(p[x,:]) for x in range(poolSize)]
+			yResults = [testM.test(p[:,y]) for y in range(poolSize)]
+			for x in range(poolSize):
+				for y in range(poolSize):
+					if xResults[x] and yResults[y]:
+						temp[x,y] = testM.test(p[x,y])
+			res += list(temp.reshape([poolSize**2]))
+		return res
+
+
+
 def getAllStrats():
 	return [getattr(testingStrategies,func) for func in dir(testingStrategies) if callable(getattr(testingStrategies, func)) and not func.startswith("__")]
 
-
-def applyTestingStrategy(strat, infectedIndividuals, poolSize):
-	print("Applying", strat.__doc__,":")
-	testingMachine = Tests()
-	testedPositive = strat(infectedIndividuals, poolSize, testingMachine)
-	assert(np.any([testedPositive[n]!=infectedIndividuals[n] for n in range(len(infectedIndividuals))])==False)
-	print("done in ", testingMachine.nTests, "tests (", testingMachine.nTests/len(infectedIndividuals)*100,"%)")
-	print()
-
-def applyAllStrategies(infectedIndividuals, poolSize):
-	for strat in getAllStrats():
-		applyTestingStrategy(strat, infectedIndividuals, poolSize)
