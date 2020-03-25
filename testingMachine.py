@@ -38,6 +38,7 @@ def applyTestingStrategy(strat, infectedIndividuals, poolSize):
 def applyAllStrategies(infectedIndividuals, poolSizes):
 	plt.figure(figsize=(15,9))
 
+	results = []
 	for strat in ts.getAllStrats():
 		res = []
 		nCoresAvailable = multiprocessing.cpu_count() -1 # We're mercifully leaving one cpu for other processes.
@@ -51,10 +52,15 @@ def applyAllStrategies(infectedIndividuals, poolSizes):
 				continue
 			with multiprocessing.Pool(len(group)) as p:
 				res += p.starmap(applyTestingStrategy, ((strat, infectedIndividuals, poolSize) for poolSize in group))
-
+		results.append(res)
 		p = plt.plot(poolSizes, res, label=strat.__doc__+" (min: "+str(poolSizes[np.argmin(res)])+")")
 		# plt.axvline(poolSizes[np.argmin(res)], c=p[0].get_color(), lw=1, ls='--')
 	plt.xlabel("poolSize")
 	plt.ylabel("number of tests performed")
 	plt.title("different pooling strategies tried to reduce total number of tests (infection rate "+str(np.sum(infectedIndividuals)/len(infectedIndividuals)*100)+"%)")
 	plt.legend(loc="lower right")
+
+	return results
+
+def getStratNames():
+	return [strat.__doc__ for strat in ts.getAllStrats()]
