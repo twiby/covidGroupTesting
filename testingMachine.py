@@ -35,7 +35,7 @@ def applyTestingStrategy(strat, infectedIndividuals, poolSize):
 	assert(np.any([testedPositive[n]!=infectedIndividuals[n] for n in range(len(infectedIndividuals))])==False)
 	return testingMachine.nTests
 
-def applyAllStrategies(infectedIndividuals, poolSizes):
+def applyAllStrategies(infectedIndividuals, poolSizes, pbar=None):
 	plt.figure(figsize=(15,9))
 
 	results = []
@@ -52,6 +52,8 @@ def applyAllStrategies(infectedIndividuals, poolSizes):
 				continue
 			with multiprocessing.Pool(len(group)) as p:
 				res += p.starmap(applyTestingStrategy, ((strat, infectedIndividuals, poolSize) for poolSize in group))
+			if pbar:
+				pbar.update(len(group))
 		results.append(res)
 		p = plt.plot(poolSizes, res, label=strat.__doc__+" (min: "+str(poolSizes[np.argmin(res)])+")")
 	plt.xlabel("poolSize")

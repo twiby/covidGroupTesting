@@ -48,6 +48,18 @@ class testingStrategies:
 			res += list(temp.reshape([poolSize**2]))
 		return res
 
+	def binarySplittingTesting(infectedIndividuals, poolSize, testM):
+		'''binary splitting testing'''
+		res = []
+		if poolSize == 1:
+			return [testM.test(i) for i in infectedIndividuals]
+		for p in tm.pools(infectedIndividuals, poolSize):
+			if testM.test(p):
+				res += testingStrategies.binarySplittingTesting(p, poolSize//2, testM)
+			else:
+				res += [False for _ in p]
+		return res
+
 
 
 def getAllStrats():

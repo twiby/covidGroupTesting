@@ -4,8 +4,9 @@ group testing of covid-19 would maybe reduce the number of tests needed. To run 
 pip install -r requirements.txt # optional, to install modules if needed
 python main.py # launches actual computation
 ```
-use the "-h" option to learn what other options you can add. The default computations are made on 1,000,000 individuals. Given an infection rate, people are infected according to a binomial law.
-If you run the script a second time, it won't recompute everything.
+Use the "-h" option to learn what other options you can add. The default computations are made on 1,000,000 individuals. Given an infection rate, people are infected according to a binomial law.
+
+If you run the script a second time, it won't recompute everything. It's optimized for multiprocessing, and will benefit high cpu count.
 
 # contribute
 To add a new testing strategy, you can add one in testingStrategies.py : add your function to the class testingStrategies to return the result of your tests. Code will fail if your tests made a mistake. 
